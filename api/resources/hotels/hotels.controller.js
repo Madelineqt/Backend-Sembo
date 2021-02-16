@@ -8,7 +8,7 @@ const APIHEADER  = {headers: {"x-api-key": SHA1}}
 
 const COUNTRIES = process.env.COUNTRIES.split(",")
 var COUNTRYURLS = COUNTRIES.map((element) => PROTOCOL + HOST + ROUTE.replace("*", element) ) 
-var RESULT = []
+var RESULT = new Array(COUNTRIES.length)
 
 getHotels = async () => {
     if (handleErrorsAndSuccess(await Promise.all(COUNTRYURLS.map((url) => axios.get(url, APIHEADER)).map(p => p.catch(e => e))))){
@@ -22,7 +22,7 @@ handleErrorsAndSuccess = (RESULTS) => {
     RESULTS.forEach((result, i)=> {
         if (!(result instanceof Error)){
             COUNTRYURLS.splice(i,1)
-            RESULT.push(result.data)
+            RESULT[COUNTRIES.findIndex(element => element === result.data[0].isoCountryId)] = result.data
         } else if (result instanceof Error) {
             FAILED.push(i)
         }
@@ -42,11 +42,7 @@ getTop3 = (hotels) => {
     return hotels.map(element => element.sort((a, b) => {return  b.score - a.score}).slice(0,3))
 }
 responseBuilder = (average, top3) => {
-    var response = COUNTRIES.reduce(function(obj, v) {
-        obj[v] = 0;
-        return obj;
-      }, {})
-    console.log(response)
+    const response = COUNTRIES.map((element, i) => ({country:COUNTRIES[i],average:average[i], top3:top3[i]}))
     return response
 }
 module.exports = {
