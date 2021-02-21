@@ -5,7 +5,7 @@ const app = express()
 const hotelsRouter = require("./api/resources/hotels/hotels.routes")
 
 const corsOptions = {
-  origin: 'http://localhost:8080',
+  origin: process.env.CLIENT_CORS_URL,
 }
 
 app.use(cors())
