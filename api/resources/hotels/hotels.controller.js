@@ -7,8 +7,6 @@ const SHA1 = process.env.SHA1
 const APIHEADER  = {headers: {"x-api-key": SHA1}}
 const COUNTRIES = process.env.COUNTRIES.split(",")
 
-
-
 getHotels = async (RESULT, COUNTRYURLS) => {
     RESULT = RESULT === undefined ? RESULT = new Array(COUNTRIES.length) :RESULT
     COUNTRYURLS = COUNTRYURLS === undefined ? COUNTRYURLS = COUNTRIES.map((element) => PROTOCOL + HOST + ROUTE.replace("*", element)) : COUNTRYURLS
@@ -18,7 +16,7 @@ getHotels = async (RESULT, COUNTRYURLS) => {
         return RESULT
     }
 }
-handleErrorsAndSuccess = (RESULTS,RESULT, COUNTRYURLS) => {
+handleErrorsAndSuccess = (RESULTS, RESULT, COUNTRYURLS) => {
     let FAILED = []
     RESULTS.forEach((result, i)=> {
         if (!(result instanceof Error)){
@@ -30,8 +28,6 @@ handleErrorsAndSuccess = (RESULTS,RESULT, COUNTRYURLS) => {
     })
     return FAILED.length > 0
 }
-
-
 getAverage = (hotels) => {
     return hotels.map(element => element.reduce((r, c) => r + c.score, 0) / element.length) 
 }
