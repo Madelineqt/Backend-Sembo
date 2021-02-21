@@ -1,5 +1,7 @@
 # backend-sembo
+
 ## Setup server
+You must have node and npm installed in your machine
 ### Library download
 ```
 npm install
