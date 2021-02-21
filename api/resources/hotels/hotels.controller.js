@@ -42,7 +42,7 @@ getTop3 = (hotels) => {
     return hotels.map(element => element.sort((a, b) => {return  b.score - a.score}).slice(0,3))
 }
 responseBuilder = (average, top3) => {
-    return COUNTRIES.map((element, i) => ({country:COUNTRIES[i],average:average[i], top3:top3[i]}))
+    return COUNTRIES.map((_, i) => ({country:COUNTRIES[i],average:average[i], top3:top3[i].map((element) => element.name).join(", ")}))
 }
 module.exports = {
     getHotels,
