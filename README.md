@@ -23,7 +23,7 @@ SHA1=25AF9EC6F27E2165E3D72B4C33CB0CB479EDD5CD
 
 
 ## Deploy server
-### Initialise server in with automatic refreshing
+### Initialise server with automatic refreshing
 ```
 npm run start
 ```
