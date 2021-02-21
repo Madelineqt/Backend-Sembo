@@ -5,20 +5,21 @@ const HOST = process.env.HOST
 const ROUTE = process.env.ROUTE
 const SHA1 = process.env.SHA1
 const APIHEADER  = {headers: {"x-api-key": SHA1}}
-
 const COUNTRIES = process.env.COUNTRIES.split(",")
-var COUNTRYURLS = COUNTRIES.map((element) => PROTOCOL + HOST + ROUTE.replace("*", element) ) 
-var RESULT = new Array(COUNTRIES.length)
 
-getHotels = async () => {
-    if (handleErrorsAndSuccess(await Promise.all(COUNTRYURLS.map((url) => axios.get(url, APIHEADER)).map(p => p.catch(e => e))))){
-        return getHotels()
+
+
+getHotels = async (RESULT, COUNTRYURLS) => {
+    RESULT = RESULT === undefined ? RESULT = new Array(COUNTRIES.length) :RESULT
+    COUNTRYURLS = COUNTRYURLS === undefined ? COUNTRYURLS = COUNTRIES.map((element) => PROTOCOL + HOST + ROUTE.replace("*", element)) : COUNTRYURLS
+    if (handleErrorsAndSuccess(await Promise.all(COUNTRYURLS.map((url) => axios.get(url, APIHEADER)).map(p => p.catch(e => e))),RESULT, COUNTRYURLS)){
+        return getHotels(RESULT, COUNTRYURLS)
     } else {
-        return returnToNormal()
-    } 
+        return RESULT
+    }
 }
-handleErrorsAndSuccess = (RESULTS) => {
-    var FAILED = []
+handleErrorsAndSuccess = (RESULTS,RESULT, COUNTRYURLS) => {
+    let FAILED = []
     RESULTS.forEach((result, i)=> {
         if (!(result instanceof Error)){
             COUNTRYURLS.splice(i,1)
@@ -29,20 +30,16 @@ handleErrorsAndSuccess = (RESULTS) => {
     })
     return FAILED.length > 0
 }
-returnToNormal = () => {
-    const finalresult = RESULT
-    COUNTRYURLS = COUNTRIES.map((element) => PROTOCOL + HOST + ROUTE.replace("*", element)) 
-    RESULT = []
-    return finalresult
-}
+
+
 getAverage = (hotels) => {
     return hotels.map(element => element.reduce((r, c) => r + c.score, 0) / element.length) 
 }
-getTop3 = (hotels) => {
+getTop3 = async (hotels) => {
     return hotels.map(element => element.sort((a, b) => {return  b.score - a.score}).slice(0,3))
 }
 responseBuilder = (average, top3) => {
-    return COUNTRIES.map((_, i) => ({country:COUNTRIES[i],average:average[i], top3:top3[i].map((element) => element.name).join(", ")}))
+    return COUNTRIES.map((_, i) => ({country:COUNTRIES[i],average:average[i], top3:top3[i].map((element) => element.name)}))
 }
 module.exports = {
     getHotels,
